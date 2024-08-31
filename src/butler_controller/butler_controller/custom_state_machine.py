@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String
+from std_msgs.msg import String  # Ensure String is imported
+from std_srvs.srv import Trigger
 
 class State:
     HOME = "HOME"
@@ -15,7 +16,13 @@ class ButlerRobot(Node):
         super().__init__('butler_robot')
         self.state = State.HOME
 
-        # Define Subscribers
+        # Define Services
+        self.request_order_srv = self.create_service(Trigger, '/request_order', self.request_order_callback)
+        self.confirm_kitchen_srv = self.create_service(Trigger, '/confirm_kitchen', self.confirm_kitchen_callback)
+        self.confirm_delivery_srv = self.create_service(Trigger, '/confirm_delivery', self.confirm_delivery_callback)
+        self.abort_mission_srv = self.create_service(Trigger, '/abort_mission', self.abort_mission_callback)
+
+        # Define Subscribers (for topics)
         self.order_received_sub = self.create_subscription(
             String,
             '/order_received',
@@ -52,7 +59,7 @@ class ButlerRobot(Node):
             self.cancel_order_callback,
             10)
 
-        # Define Publishers (if necessary, for example to publish state changes)
+        # Example Publisher for state updates (optional)
         self.state_pub = self.create_publisher(String, '/current_state', 10)
 
     def publish_state(self):
@@ -65,6 +72,44 @@ class ButlerRobot(Node):
         self.state = new_state
         self.publish_state()
 
+    # Service Callbacks
+    def request_order_callback(self, request, response):
+        self.get_logger().info('Order requested')
+        self.transition_to(State.TO_KITCHEN)
+        response.success = True
+        response.message = "Order started, moving to kitchen."
+        return response
+
+    def confirm_kitchen_callback(self, request, response):
+        if self.state == State.TO_KITCHEN or self.state == State.AT_KITCHEN:
+            self.get_logger().info('Kitchen confirmed')
+            self.transition_to(State.TO_TABLE)
+            response.success = True
+            response.message = "Kitchen confirmed, moving to table."
+        else:
+            response.success = False
+            response.message = "Cannot confirm kitchen, wrong state."
+        return response
+
+    def confirm_delivery_callback(self, request, response):
+        if self.state == State.AT_TABLE:
+            self.get_logger().info('Delivery confirmed')
+            self.transition_to(State.RETURN_HOME)
+            response.success = True
+            response.message = "Delivery confirmed, returning home."
+        else:
+            response.success = False
+            response.message = "Cannot confirm delivery, wrong state."
+        return response
+
+    def abort_mission_callback(self, request, response):
+        self.get_logger().info('Mission aborted, returning home')
+        self.transition_to(State.HOME)
+        response.success = True
+        response.message = "Mission aborted, returning home."
+        return response
+
+    # Topic Callbacks (for the subscribers)
     def order_received_callback(self, msg):
         self.get_logger().info(f'Received order: {msg.data}')
         self.transition_to(State.TO_KITCHEN)
