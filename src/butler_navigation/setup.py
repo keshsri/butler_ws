@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 import os
 from glob import glob
 
-package_name = 'butler_controller'
+package_name = 'butler_navigation'
 
 setup(
     name=package_name,
@@ -13,9 +13,8 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
-        (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),  # Include RViz config files
-        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),  # Include config files
-        (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),
+        # Include configuration files
+        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -26,8 +25,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'custom_state_machine = butler_controller.custom_state_machine:main',
-            'order_to_delivery_robot = butler_controller.order_to_delivery:main',
+            'state_machine = butler_navigation.state_machine:main'
         ],
     },
 )

@@ -44,5 +44,6 @@ This document outlines the steps taken to set up and develop the ROS workspace f
   git commit -m "Initial commit with workspace setup"
   git push -u origin main
   ```
+  ## Custom State Machine Implementation in ROS 2
 
 *End of document.*

@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String  # Ensure String is imported
+from geometry_msgs.msg import PoseStamped
 from std_srvs.srv import Trigger
 
 class State:
@@ -16,61 +16,35 @@ class ButlerRobot(Node):
         super().__init__('butler_robot')
         self.state = State.HOME
 
+        # Publisher for sending navigation goals
+        self.nav_goal_pub = self.create_publisher(PoseStamped, '/goal_pose', 10)
+
         # Define Services
         self.request_order_srv = self.create_service(Trigger, '/request_order', self.request_order_callback)
         self.confirm_kitchen_srv = self.create_service(Trigger, '/confirm_kitchen', self.confirm_kitchen_callback)
         self.confirm_delivery_srv = self.create_service(Trigger, '/confirm_delivery', self.confirm_delivery_callback)
         self.abort_mission_srv = self.create_service(Trigger, '/abort_mission', self.abort_mission_callback)
 
-        # Define Subscribers (for topics)
-        self.order_received_sub = self.create_subscription(
-            String,
-            '/order_received',
-            self.order_received_callback,
-            10)
-
-        self.kitchen_arrival_sub = self.create_subscription(
-            String,
-            '/kitchen_arrival',
-            self.kitchen_arrival_callback,
-            10)
-
-        self.food_ready_sub = self.create_subscription(
-            String,
-            '/food_ready',
-            self.food_ready_callback,
-            10)
-
-        self.table_arrival_sub = self.create_subscription(
-            String,
-            '/table_arrival',
-            self.table_arrival_callback,
-            10)
-
-        self.delivery_confirmed_sub = self.create_subscription(
-            String,
-            '/delivery_confirmed',
-            self.delivery_confirmed_callback,
-            10)
-
-        self.cancel_order_sub = self.create_subscription(
-            String,
-            '/cancel_order',
-            self.cancel_order_callback,
-            10)
-
-        # Example Publisher for state updates (optional)
-        self.state_pub = self.create_publisher(String, '/current_state', 10)
-
-    def publish_state(self):
-        msg = String()
-        msg.data = f"Current state: {self.state}"
-        self.state_pub.publish(msg)
+    def send_navigation_goal(self, x, y, theta):
+        goal_msg = PoseStamped()
+        goal_msg.header.frame_id = "map"
+        goal_msg.pose.position.x = x
+        goal_msg.pose.position.y = y
+        goal_msg.pose.orientation.z = theta
+        goal_msg.pose.orientation.w = 1.0
+        self.nav_goal_pub.publish(goal_msg)
+        self.get_logger().info(f"Navigation goal sent: x={x}, y={y}, theta={theta}")
 
     def transition_to(self, new_state):
         self.get_logger().info(f"Transitioning from {self.state} to {new_state}")
         self.state = new_state
-        self.publish_state()
+
+        if self.state == State.TO_KITCHEN:
+            self.send_navigation_goal(1.0, 1.0, 0.0)  # Example coordinates
+        elif self.state == State.TO_TABLE:
+            self.send_navigation_goal(2.0, 2.0, 0.0)  # Example coordinates
+        elif self.state == State.RETURN_HOME:
+            self.send_navigation_goal(0.0, 0.0, 0.0)  # Return to home
 
     # Service Callbacks
     def request_order_callback(self, request, response):
@@ -108,31 +82,6 @@ class ButlerRobot(Node):
         response.success = True
         response.message = "Mission aborted, returning home."
         return response
-
-    # Topic Callbacks (for the subscribers)
-    def order_received_callback(self, msg):
-        self.get_logger().info(f'Received order: {msg.data}')
-        self.transition_to(State.TO_KITCHEN)
-
-    def kitchen_arrival_callback(self, msg):
-        self.get_logger().info('Arrived at the kitchen')
-        self.transition_to(State.AT_KITCHEN)
-
-    def food_ready_callback(self, msg):
-        self.get_logger().info('Food is ready, moving to table')
-        self.transition_to(State.TO_TABLE)
-
-    def table_arrival_callback(self, msg):
-        self.get_logger().info('Arrived at the table')
-        self.transition_to(State.AT_TABLE)
-
-    def delivery_confirmed_callback(self, msg):
-        self.get_logger().info('Delivery confirmed, returning home')
-        self.transition_to(State.RETURN_HOME)
-
-    def cancel_order_callback(self, msg):
-        self.get_logger().info('Order canceled, returning home')
-        self.transition_to(State.HOME)
 
 def main(args=None):
     rclpy.init(args=args)

@@ -1,0 +1,52 @@
+#VRML_SIM R2023b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/robots/robotis/turtlebot/protos/TurtleBot3Burger.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/tables/protos/Table.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/kitchen/components/protos/Worktop.proto"
+
+WorldInfo {
+}
+Viewpoint {
+  orientation -0.22300840255127163 -0.19010073999323207 0.9561009157225796 4.509266159067304
+  position 1.374855713168174 5.409545924561466 2.498660888672297
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 5 5
+}
+Table {
+  translation -2 -2 0
+  name "table(2)"
+  size 0.5 0.5 0.2
+}
+TurtleBot3Burger {
+  hidden position_0_0 -1.0067773987919707e-11
+  hidden position_0_1 -5.017644846252725e-12
+  hidden position_0_2 -12.096383844997556
+  hidden position2_0_2 10.87646069309559
+  hidden position3_0_2 -2.115671097018077
+  hidden rotation_8 0 -0.9999999999999999 0 1.5707959997923617
+  hidden rotation_9 -0.7071047812470261 2.0627817409178149e-16 -0.7071087811204126 3.141588
+  hidden rotation_10 0.7194820107143018 -0.2254048876671628 -0.6569157273762433 2.809952110594854
+  translation -1.9999999983203327 1.999999999996074 -0.00024772023404095317
+  rotation -0.0018892989656699207 -0.9957609709424331 0.09195933501935118 0.004661325413545476
+}
+Table {
+  translation 2 -2 0
+  size 0.5 0.5 0.2
+}
+Table {
+  translation 0 -2 0
+  name "table(1)"
+  size 0.5 0.5 0.2
+}
+Worktop {
+  translation 2 2 0.03
+  size 1 1 0.06
+}
