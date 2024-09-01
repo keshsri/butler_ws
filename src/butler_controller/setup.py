@@ -29,6 +29,7 @@ setup(
             'custom_state_machine = butler_controller.custom_state_machine:main',
             'order_to_delivery_robot = butler_controller.order_to_delivery:main',
             'order_with_confirmations_robot = butler_controller.order_with_confirmation:main',
+            'order_with_timeout_robot = butler_controller.order_with_timeout:main',
         ],
     },
 )
