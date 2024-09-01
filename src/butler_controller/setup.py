@@ -30,6 +30,7 @@ setup(
             'order_to_delivery_robot = butler_controller.order_to_delivery:main',
             'order_with_confirmations_robot = butler_controller.order_with_confirmation:main',
             'order_with_timeout_robot = butler_controller.order_with_timeout:main',
+            'order_with_kitchen_return_robot = butler_controller.order_with_kitchen_return:main',
         ],
     },
 )
