@@ -32,6 +32,7 @@ setup(
             'order_with_timeout_robot = butler_controller.order_with_timeout:main',
             'order_with_kitchen_return_robot = butler_controller.order_with_kitchen_return:main',
             'order_with_cancellation_robot = butler_controller.order_with_cancellation:main',
+            'multiple_order_delivery_robot = butler_controller.multiple_order_delivery:main',
         ],
     },
 )
