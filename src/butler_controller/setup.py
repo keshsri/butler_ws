@@ -34,6 +34,7 @@ setup(
             'order_with_cancellation_robot = butler_controller.order_with_cancellation:main',
             'multiple_order_delivery_robot = butler_controller.multiple_order_delivery:main',
             'multiple_order_with_skip_robot = butler_controller.multiple_order_with_skip:main',
+            'multiple_order_with_cancellation_robot = butler_controller.multiple_order_with_cancellation:main',
         ],
     },
 )
